@@ -21,8 +21,8 @@ default_fact_files.each do |f|
   begin
     default_facts.merge!(YAML.safe_load(File.read(f), [], [], true))
   rescue ArgumentError => e
-    if e.message == "wrong number of arguments (given 4, expected 1..3)"
-      default_facts.merge!(YAML.load(File.read(f)))
+    if e.message == 'wrong number of arguments (given 4, expected 1..3)'
+      default_facts.merge!(YAML.safe_load(File.read(f)))
     end
   rescue => e
     RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e.class} - #{e}"
@@ -39,7 +39,7 @@ RSpec.configure do |c|
   c.before :each do
     # set to strictest setting for testing
     # by default Puppet runs at warning level
-    #Puppet.settings[:strict] = :warning
+    # Puppet.settings[:strict] = :warning
   end
   c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
   c.after(:suite) do

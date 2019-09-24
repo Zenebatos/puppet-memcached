@@ -22,6 +22,7 @@ class memcached (
   $listen_ip       = '127.0.0.1',
   $tcp_port        = '11211',
   $udp_port        = '11211',
+  $conn_backlog    = undef,
   $user            = $::memcached::params::user,
   $max_connections = '8192',
   $verbosity       = undef,
@@ -52,6 +53,9 @@ class memcached (
   validate_bool($service_manage)
 
   validate_bool($syslog)
+  if ($conn_backlog) {
+    validate_integer($conn_backlog)
+  }
 
   # Logging to syslog and file are mutually exclusive
   # Fail if both options are defined

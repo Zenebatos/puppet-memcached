@@ -1,7 +1,28 @@
 require 'spec_helper'
 describe 'memcached' do
+  let :default_params do
+    {
+      package_ensure: 'present',
+      logfile: '/var/log/memcached.log',
+      max_memory: false,
+      max_item_size: false,
+      min_item_size: false,
+      lock_memory: false,
+      listen_ip: '127.0.0.1',
+      tcp_port: '11211',
+      udp_port: '11211',
+      user: 'nobody',
+      max_connections: '8192',
+      install_dev: false,
+      processorcount: 1,
+      use_sasl: false,
+      large_mem_pages: false,
+      pidfile: '/var/run/memcached.pid',
+    }
+  end
+
   describe 'with manage_firewall parameter' do
-    %w[Debian RedHat].each do |osfam|
+    ['Debian', 'RedHat'].each do |osfam|
       context "on osfamily #{osfam}" do
         let(:facts) do
           { osfamily: osfam,
@@ -32,37 +53,16 @@ describe 'memcached' do
         end
 
         context 'set to an invalid type (array)' do
-          let(:params) { { manage_firewall: %w[invalid type] } }
+          let(:params) { { manage_firewall: ['invalid', 'type'] } }
 
           it do
-            expect do
+            expect {
               is_expected.to contain_class('memcached')
-            end.to raise_error(Puppet::Error)
+            }.to raise_error(Puppet::Error)
           end
         end
       end
     end
-  end
-
-  let :default_params do
-    {
-      package_ensure: 'present',
-      logfile: '/var/log/memcached.log',
-      max_memory: false,
-      max_item_size: false,
-      min_item_size: false,
-      lock_memory: false,
-      listen_ip: '127.0.0.1',
-      tcp_port: '11211',
-      udp_port: '11211',
-      user: 'nobody',
-      max_connections: '8192',
-      install_dev: false,
-      processorcount: 1,
-      use_sasl: false,
-      large_mem_pages: false,
-      pidfile: '/var/run/memcached.pid'
-    }
   end
 
   [{},
@@ -82,7 +82,8 @@ describe 'memcached' do
      processorcount: 3,
      use_sasl: true,
      large_mem_pages: true,
-     extended_opts: %w[lru_crawler lru_maintainer]
+     conn_backlog: 500,
+     extended_opts: ['lru_crawler', 'lru_maintainer'],
    },
    {
      package_ensure: 'present',
@@ -97,25 +98,25 @@ describe 'memcached' do
      verbosity: 'vvv',
      install_dev: true,
      processorcount: 1,
-     extended_opts: %w[lru_crawler lru_maintainer]
+     extended_opts: ['lru_crawler', 'lru_maintainer'],
    },
    {
-     listen_ip: ''
+     listen_ip: '',
    },
    {
-     pidfile: false
+     pidfile: false,
    },
    {
-     pidfile: '/var/log/memcached.pid'
+     pidfile: '/var/log/memcached.pid',
    },
    {
      package_ensure: 'absent',
-     install_dev: true
+     install_dev: true,
    },
    {
-     service_manage: false
+     service_manage: false,
    }].each do |param_set|
-    describe "when #{param_set == {} ? 'using default' : 'specifying'} class parameters" do
+    describe "when #{(param_set == {}) ? 'using default' : 'specifying'} class parameters" do
       let :param_hash do
         default_params.merge(param_set)
       end
@@ -129,7 +130,7 @@ describe 'memcached' do
           {
             osfamily: osfamily,
             memorysize: '1000 MB',
-            processorcount: '1'
+            processorcount: '1',
           }
         end
 
@@ -153,8 +154,8 @@ describe 'memcached' do
           it do
             is_expected.to contain_file('/etc/memcached.conf').with(
               'owner'   => 'root',
-              'group'   => 0
-          )
+              'group'   => 0,
+            )
           end
 
           it do
@@ -163,14 +164,14 @@ describe 'memcached' do
             elsif param_hash[:package_ensure] == 'absent'
               is_expected.to contain_service('memcached').with(
                 'ensure'     => 'stopped',
-                'enable'     => false
+                'enable'     => false,
               )
             else
               is_expected.to contain_service('memcached').with(
                 'ensure'     => 'running',
                 'enable'     => true,
                 'hasrestart' => true,
-                'hasstatus'  => false
+                'hasstatus'  => false,
               )
             end
           end
@@ -180,7 +181,7 @@ describe 'memcached' do
               catalogue,
               'file',
               '/etc/memcached.conf',
-              'content'
+              'content',
             )
             expected_lines = [
               "logfile #{param_hash[:logfile]}",
@@ -188,7 +189,7 @@ describe 'memcached' do
               "-U #{param_hash[:udp_port]}",
               "-u #{param_hash[:user]}",
               "-c #{param_hash[:max_connections]}",
-              "-t #{param_hash[:processorcount]}"
+              "-t #{param_hash[:processorcount]}",
             ]
             if param_hash[:max_memory]
               if param_hash[:max_memory].end_with?('%')
@@ -201,6 +202,9 @@ describe 'memcached' do
             end
             if param_hash[:listen_ip] != ''
               expected_lines.push("-l #{param_hash[:listen_ip]}")
+            end
+            if param_hash[:conn_backlog]
+              expected_lines.push("-b #{param_hash[:conn_backlog]}")
             end
             expected_lines.push('-k') if param_hash[:lock_memory]
             if param_hash[:pidfile]
@@ -230,7 +234,7 @@ describe 'memcached' do
       {
         osfamily: 'Solaris',
         memorysize: '1000 MB',
-        processorcount: '1'
+        processorcount: '1',
       }
     end
 
@@ -255,7 +259,7 @@ describe 'memcached' do
           'ensure'     => 'running',
           'enable'     => true,
           'hasrestart' => true,
-          'hasstatus'  => false
+          'hasstatus'  => false,
         )
       end
 
@@ -264,7 +268,7 @@ describe 'memcached' do
           'fmri'     => 'memcached:default',
           'property' => 'memcached/options',
           'value'    => "\"-m\" \"950\" \"-l\" \"127.0.0.1\" \"-p\" \"11211\" \"-U\" \"11211\" \"-u\" \"nobody\" \"-c\" \"8192\" \"-t\" \"1\"\n",
-          'notify'   => 'Service[memcached]'
+          'notify'   => 'Service[memcached]',
         )
       end
     end
@@ -275,7 +279,7 @@ describe 'memcached' do
       {
         osfamily: 'FreeBSD',
         memorysize: '1000 MB',
-        processorcount: '2'
+        processorcount: '2',
       }
     end
 
@@ -296,13 +300,13 @@ describe 'memcached' do
           'ensure'     => 'running',
           'enable'     => true,
           'hasrestart' => true,
-          'hasstatus'  => false
+          'hasstatus'  => false,
         )
       end
 
       it do
         is_expected.to contain_file('/etc/rc.conf.d/memcached').with_content(
-          "### MANAGED BY PUPPET\n### DO NOT EDIT\n\n\memcached_enable=\"YES\"\nmemcached_flags=\"-d -u nobody -P /var/run/memcached.pid -t 1 -l 127.0.0.1 -c 8192 -p 11211 -U 11211\"\n"
+          "### MANAGED BY PUPPET\n### DO NOT EDIT\n\n\memcached_enable=\"YES\"\nmemcached_flags=\"-d -u nobody -P /var/run/memcached.pid -t 1 -l 127.0.0.1 -c 8192 -p 11211 -U 11211\"\n",
         )
       end
 
@@ -311,7 +315,7 @@ describe 'memcached' do
           'fmri'     => 'memcached:default',
           'property' => 'memcached/options',
           'value'    => '"-m" "950" "-l" "127.0.0.1" "-p" "11211" "-U" "11211" "-u" "nobody" "-c" "8192" "-t" "1"',
-          'notify'   => 'Service[memcached]'
+          'notify'   => 'Service[memcached]',
         )
       end
     end
@@ -321,7 +325,7 @@ describe 'memcached' do
         {
           'listen_ip' => '127.0.0.1',
           'tcp_port'  => '9999',
-          'udp_port'  => '9999'
+          'udp_port'  => '9999',
         }
       end
 
@@ -336,7 +340,7 @@ describe 'memcached' do
       # TODO: figure out how to check the file contents
       it do
         is_expected.to contain_file('/etc/rc.conf.d/memcached').with_content(
-          "### MANAGED BY PUPPET\n### DO NOT EDIT\n\n\memcached_enable=\"YES\"\nmemcached_flags=\"-d -u nobody -P /var/run/memcached.pid -t 2 -l 127.0.0.1 -c 8192 -p 9999 -U 9999\"\n"
+          "### MANAGED BY PUPPET\n### DO NOT EDIT\n\n\memcached_enable=\"YES\"\nmemcached_flags=\"-d -u nobody -P /var/run/memcached.pid -t 2 -l 127.0.0.1 -c 8192 -p 9999 -U 9999\"\n",
         )
       end
     end

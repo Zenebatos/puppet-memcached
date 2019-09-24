@@ -24,6 +24,9 @@ end
 if @factor
   result << '-f ' + @factor.to_s
 end
+if @conn_backlog
+  result << "-b #{@conn_backlog.to_s}"
+end
 if @extended_opts
   result << '-o ' + @extended_opts.join(',')
 end 

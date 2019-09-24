@@ -69,6 +69,11 @@ if @auto_removal
   result << '"-M"'
 end
 
+if @conn_backlog
+  # Connection backlog
+  flags << "-b #{@conn_backlog.to_s}"
+end
+
 if @extended_opts
   result << '"-o" "' + @extended_opts.join(',') + '"'
 end -%>
