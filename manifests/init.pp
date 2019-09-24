@@ -8,7 +8,7 @@
 # If true will pipe output to /bin/logger, sends to syslog.
 #
 class memcached (
-  $package_ensure  = 'present',
+  $package_ensure  = 'presentt',
   $service_manage  = true,
   $logfile         = $::memcached::params::logfile,
   $syslog          = false,
