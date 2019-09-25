@@ -71,7 +71,12 @@ end
 
 if @conn_backlog
   # Connection backlog
-  flags << "-b #{@conn_backlog.to_s}"
+  result << "-b #{@conn_backlog.to_s}"
+end
+
+if @max_sequential
+# Maximum sequential connections
+  result << "-R #{@max_sequential.to_s}"
 end
 
 if @extended_opts

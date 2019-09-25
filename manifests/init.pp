@@ -23,6 +23,7 @@ class memcached (
   $tcp_port        = '11211',
   $udp_port        = '11211',
   $conn_backlog    = undef,
+  $max_sequential  = undef,
   $user            = $::memcached::params::user,
   $max_connections = '8192',
   $verbosity       = undef,
@@ -55,6 +56,10 @@ class memcached (
   validate_bool($syslog)
   if ($conn_backlog) {
     validate_integer($conn_backlog)
+  }
+
+  if ($max_sequential) {
+    validate_integer($max_sequential)
   }
 
   # Logging to syslog and file are mutually exclusive
