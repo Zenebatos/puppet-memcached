@@ -29,7 +29,7 @@ if @max_connections
   result << '-c ' + @max_connections
 end
 if @conn_backlog
-  resulot << "-b #{@conn_backlog.to_s}"
+  result << "-b #{@conn_backlog.to_s}"
 end
 if @extended_opts
   result << '-o ' + @extended_opts.join(',')
