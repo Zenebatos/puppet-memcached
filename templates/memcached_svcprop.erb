@@ -69,6 +69,16 @@ if @auto_removal
   result << '"-M"'
 end
 
+if @conn_backlog
+  # Connection backlog
+  result << "-b #{@conn_backlog.to_s}"
+end
+
+if @max_sequential
+# Maximum sequential connections
+  result << "-R #{@max_sequential.to_s}"
+end
+
 if @extended_opts
   result << '"-o" "' + @extended_opts.join(',') + '"'
 end -%>

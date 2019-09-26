@@ -81,6 +81,16 @@ logfile <%= @logfile -%>
 -M
 <% end -%>
 
+<% if @conn_backlog -%>
+# Connection backlog
+-b <%= @conn_backlog %>
+<% end -%>
+
+<% if @max_sequential -%>
+# Maximum sequential connections
+-R <%= @max_sequential %>
+<% end -%>
+
 <% if @extended_opts -%>
 -o <%= @extended_opts.join(',') -%>
 <% end -%>

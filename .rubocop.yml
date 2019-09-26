@@ -1,516 +1,126 @@
-require: rubocop-rspec
+---
+require:
+- rubocop-rspec
+- rubocop-i18n
 AllCops:
-  TargetRubyVersion: 1.9
+  DisplayCopNames: true
+  TargetRubyVersion: '2.1'
   Include:
-    - '**/Rakefile'
-    - '**/Gemfile'
-    - ./**/*.rb
+  - "./**/*.rb"
   Exclude:
-    - vendor/**/*
-    - .vendor/**/*
-    - pkg/**/*
-    - spec/fixtures/**/*
-Lint/ConditionPosition:
-  Enabled: true
-
-Lint/ElseLayout:
-  Enabled: true
-
-Lint/UnreachableCode:
-  Enabled: true
-
-Lint/UselessComparison:
-  Enabled: true
-
-Lint/EnsureReturn:
-  Enabled: true
-
-Lint/HandleExceptions:
-  Enabled: true
-
-Lint/LiteralInCondition:
-  Enabled: true
-
-Lint/ShadowingOuterLocalVariable:
-  Enabled: true
-
-Lint/LiteralInInterpolation:
-  Enabled: true
-
-Style/HashSyntax:
+  - bin/*
+  - ".vendor/**/*"
+  - "**/Gemfile"
+  - "**/Rakefile"
+  - pkg/**/*
+  - spec/fixtures/**/*
+  - vendor/**/*
+  - "**/Puppetfile"
+  - "**/Vagrantfile"
+  - "**/Guardfile"
+Metrics/LineLength:
+  Description: People have wide screens, use them.
+  Max: 200
+GetText:
   Enabled: false
-
-Style/RedundantReturn:
-  Enabled: true
-
-Lint/AmbiguousOperator:
-  Enabled: true
-
-Lint/AssignmentInCondition:
-  Enabled: true
-
-Style/SpaceBeforeComment:
-  Enabled: true
-
-Style/AndOr:
-  Enabled: true
-
-Style/RedundantSelf:
-  Enabled: true
-
-# Method length is not necessarily an indicator of code quality
-Metrics/MethodLength:
-  Enabled: false
-
-# Module length is not necessarily an indicator of code quality
-Metrics/ModuleLength:
-  Enabled: false
-
-Style/WhileUntilModifier:
-  Enabled: true
-
-Lint/AmbiguousRegexpLiteral:
-  Enabled: true
-
-Security/Eval:
-  Enabled: true
-
-Lint/BlockAlignment:
-  Enabled: true
-
-Lint/DefEndAlignment:
-  Enabled: true
-
-Lint/EndAlignment:
-  Enabled: true
-
-Lint/DeprecatedClassMethods:
-  Enabled: true
-
-Lint/Loop:
-  Enabled: true
-
-Lint/ParenthesesAsGroupedExpression:
-  Enabled: true
-
-Lint/RescueException:
-  Enabled: true
-
-Lint/StringConversionInInterpolation:
-  Enabled: true
-
-Lint/UnusedBlockArgument:
-  Enabled: true
-
-Lint/UnusedMethodArgument:
-  Enabled: true
-
-Lint/UselessAccessModifier:
-  Enabled: true
-
-Lint/UselessAssignment:
-  Enabled: true
-
-Lint/Void:
-  Enabled: true
-
-Style/AccessModifierIndentation:
-  Enabled: true
-
-Style/AccessorMethodName:
-  Enabled: true
-
-Style/Alias:
-  Enabled: true
-
-Style/AlignArray:
-  Enabled: true
-
-Style/AlignHash:
-  Enabled: true
-
-Style/AlignParameters:
-  Enabled: true
-
-Metrics/BlockNesting:
-  Enabled: true
-
-Style/AsciiComments:
-  Enabled: true
-
-Style/Attr:
-  Enabled: true
-
-Style/BracesAroundHashParameters:
-  Enabled: true
-
-Style/CaseEquality:
-  Enabled: true
-
-Style/CaseIndentation:
-  Enabled: true
-
-Style/CharacterLiteral:
-  Enabled: true
-
-Style/ClassAndModuleCamelCase:
-  Enabled: true
-
+GetText/DecorateString:
+  Description: We don't want to decorate test output.
+  Exclude:
+  - spec/**/*
+RSpec/BeforeAfterAll:
+  Description: Beware of using after(:all) as it may cause state to leak between tests.
+    A necessary evil in acceptance testing.
+  Exclude:
+  - spec/acceptance/**/*.rb
+RSpec/HookArgument:
+  Description: Prefer explicit :each argument, matching existing module's style
+  EnforcedStyle: each
+Style/BlockDelimiters:
+  Description: Prefer braces for chaining. Mostly an aesthetical choice. Better to
+    be consistent then.
+  EnforcedStyle: braces_for_chaining
 Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/ClassCheck:
-  Enabled: true
-
-# Class length is not necessarily an indicator of code quality
-Metrics/ClassLength:
-  Enabled: false
-
-Style/ClassMethods:
-  Enabled: true
-
-Style/ClassVars:
-  Enabled: true
-
-Style/WhenThen:
-  Enabled: true
-
+  Description: Compact style reduces the required amount of indentation.
+  EnforcedStyle: compact
+Style/EmptyElse:
+  Description: Enforce against empty else clauses, but allow `nil` for clarity.
+  EnforcedStyle: empty
+Style/FormatString:
+  Description: Following the main puppet project's style, prefer the % format format.
+  EnforcedStyle: percent
+Style/FormatStringToken:
+  Description: Following the main puppet project's style, prefer the simpler template
+    tokens over annotated ones.
+  EnforcedStyle: template
+Style/Lambda:
+  Description: Prefer the keyword for easier discoverability.
+  EnforcedStyle: literal
+Style/RegexpLiteral:
+  Description: Community preference. See https://github.com/voxpupuli/modulesync_config/issues/168
+  EnforcedStyle: percent_r
+Style/TernaryParentheses:
+  Description: Checks for use of parentheses around ternary conditions. Enforce parentheses
+    on complex expressions for better readability, but seriously consider breaking
+    it up.
+  EnforcedStyle: require_parentheses_when_complex
+Style/TrailingCommaInArguments:
+  Description: Prefer always trailing comma on multiline argument lists. This makes
+    diffs, and re-ordering nicer.
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInLiteral:
+  Description: Prefer always trailing comma on multiline literals. This makes diffs,
+    and re-ordering nicer.
+  EnforcedStyleForMultiline: comma
+Style/SymbolArray:
+  Description: Using percent style obscures symbolic intent of array's contents.
+  EnforcedStyle: brackets
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+Style/Documentation:
+  Exclude:
+  - lib/puppet/parser/functions/**/*
+  - spec/**/*
 Style/WordArray:
-  Enabled: true
-
-Style/UnneededPercentQ:
-  Enabled: true
-
-Style/Tab:
-  Enabled: true
-
-Style/SpaceBeforeSemicolon:
-  Enabled: true
-
-Style/TrailingBlankLines:
-  Enabled: true
-
-Style/SpaceInsideBlockBraces:
-  Enabled: true
-
-Style/SpaceInsideBrackets:
-  Enabled: true
-
-Style/SpaceInsideHashLiteralBraces:
-  Enabled: true
-
-Style/SpaceInsideParens:
-  Enabled: true
-
-Style/LeadingCommentSpace:
-  Enabled: true
-
-Style/SpaceBeforeFirstArg:
-  Enabled: true
-
-Style/SpaceAfterColon:
-  Enabled: true
-
-Style/SpaceAfterComma:
-  Enabled: true
-
-Style/SpaceAfterMethodName:
-  Enabled: true
-
-Style/SpaceAfterNot:
-  Enabled: true
-
-Style/SpaceAfterSemicolon:
-  Enabled: true
-
-Style/SpaceAroundEqualsInParameterDefault:
-  Enabled: true
-
-Style/SpaceAroundOperators:
-  Enabled: true
-
-Style/SpaceBeforeBlockBraces:
-  Enabled: true
-
-Style/SpaceBeforeComma:
-  Enabled: true
-
+  EnforcedStyle: brackets
 Style/CollectionMethods:
   Enabled: true
-
-Style/CommentIndentation:
+Style/MethodCalledOnDoEndBlock:
   Enabled: true
-
-Style/ColonMethodCall:
+Style/StringMethods:
   Enabled: true
-
-Style/CommentAnnotation:
-  Enabled: true
-
-# 'Complexity' is very relative
+Layout/EndOfLine:
+  Enabled: false
+Layout/IndentHeredoc:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-
-Style/ConstantName:
-  Enabled: true
-
-Style/Documentation:
+Metrics/MethodLength:
   Enabled: false
-
-Style/DefWithParentheses:
-  Enabled: true
-
-Style/PreferredHashMethods:
-  Enabled: true
-
-Style/DotPosition:
-  EnforcedStyle: trailing
-
-Style/DoubleNegation:
-  Enabled: true
-
-Style/EachWithObject:
-  Enabled: true
-
-Style/EmptyLineBetweenDefs:
-  Enabled: true
-
-Style/IndentArray:
-  Enabled: true
-
-Style/IndentHash:
-  Enabled: true
-
-Style/IndentationConsistency:
-  Enabled: true
-
-Style/IndentationWidth:
-  Enabled: true
-
-Style/EmptyLines:
-  Enabled: true
-
-Style/EmptyLinesAroundAccessModifier:
-  Enabled: true
-
-Style/EmptyLiteral:
-  Enabled: true
-
-# Configuration parameters: AllowURI, URISchemes.
-Metrics/LineLength:
+Metrics/ModuleLength:
   Enabled: false
-
-Style/MethodCallWithoutArgsParentheses:
-  Enabled: true
-
-Style/MethodDefParentheses:
-  Enabled: true
-
-Style/LineEndConcatenation:
-  Enabled: true
-
-Style/TrailingWhitespace:
-  Enabled: true
-
-Style/StringLiterals:
-  Enabled: true
-
-Style/TrailingCommaInArguments:
-  Enabled: true
-
-Style/TrailingCommaInLiteral:
-  Enabled: true
-
-Style/GlobalVars:
-  Enabled: true
-
-Style/GuardClause:
-  Enabled: true
-
-Style/IfUnlessModifier:
-  Enabled: true
-
-Style/MultilineIfThen:
-  Enabled: true
-
-Style/NegatedIf:
-  Enabled: true
-
-Style/NegatedWhile:
-  Enabled: true
-
-Style/Next:
-  Enabled: true
-
-Style/SingleLineBlockParams:
-  Enabled: true
-
-Style/SingleLineMethods:
-  Enabled: true
-
-Style/SpecialGlobalVars:
-  Enabled: true
-
-Style/TrivialAccessors:
-  Enabled: true
-
-Style/UnlessElse:
-  Enabled: true
-
-Style/VariableInterpolation:
-  Enabled: true
-
-Style/VariableName:
-  Enabled: true
-
-Style/WhileUntilDo:
-  Enabled: true
-
-Style/EvenOdd:
-  Enabled: true
-
-Style/FileName:
-  Enabled: true
-
-Style/For:
-  Enabled: true
-
-Style/Lambda:
-  Enabled: true
-
-Style/MethodName:
-  Enabled: true
-
-Style/MultilineTernaryOperator:
-  Enabled: true
-
-Style/NestedTernaryOperator:
-  Enabled: true
-
-Style/NilComparison:
-  Enabled: true
-
-Style/FormatString:
-  Enabled: true
-
-Style/MultilineBlockChain:
-  Enabled: true
-
-Style/Semicolon:
-  Enabled: true
-
-Style/SignalException:
-  Enabled: true
-
-Style/NonNilCheck:
-  Enabled: true
-
-Style/Not:
-  Enabled: true
-
-Style/NumericLiterals:
-  Enabled: true
-
-Style/OneLineConditional:
-  Enabled: true
-
-Style/OpMethod:
-  Enabled: true
-
-Style/ParenthesesAroundCondition:
-  Enabled: true
-
-Style/PercentLiteralDelimiters:
-  Enabled: true
-
-Style/PerlBackrefs:
-  Enabled: true
-
-Style/PredicateName:
-  Enabled: true
-
-Style/RedundantException:
-  Enabled: true
-
-Style/SelfAssignment:
-  Enabled: true
-
-Style/Proc:
-  Enabled: true
-
-Style/RaiseArgs:
-  Enabled: true
-
-Style/RedundantBegin:
-  Enabled: true
-
-Style/RescueModifier:
-  Enabled: true
-
-# based on https://github.com/voxpupuli/modulesync_config/issues/168
-Style/RegexpLiteral:
-  EnforcedStyle: percent_r
-  Enabled: true
-
-Lint/UnderscorePrefixedVariableName:
-  Enabled: true
-
 Metrics/ParameterLists:
   Enabled: false
-
-Lint/RequireParentheses:
-  Enabled: true
-
-Style/SpaceBeforeFirstArg:
-  Enabled: true
-
-Style/ModuleFunction:
-  Enabled: true
-
-Lint/Debugger:
-  Enabled: true
-
-Style/IfWithSemicolon:
-  Enabled: true
-
-Style/Encoding:
-  Enabled: true
-
-Style/BlockDelimiters:
-  Enabled: true
-
-Style/MultilineBlockLayout:
-  Enabled: true
-
-# 'Complexity' is very relative
-Metrics/AbcSize:
-  Enabled: False
-
-# 'Complexity' is very relative
 Metrics/PerceivedComplexity:
-  Enabled: False
-
-Lint/UselessAssignment:
-  Enabled: true
-
-Style/ClosingParenthesisIndentation:
   Enabled: false
-
-Metrics/BlockLength:                                                                   
-  Enabled: false
-
-Bundler/DuplicatedGem:
-  Enabled: false
-
-# RSpec
-
-# We don't use rspec in this way
 RSpec/DescribeClass:
-  Enabled: False
-
-# Example length is not necessarily an indicator of code quality
+  Enabled: false
 RSpec/ExampleLength:
-  Enabled: False
-
+  Enabled: false
+RSpec/MessageExpectation:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
 RSpec/NestedGroups:
-  Max: 4
+  Enabled: false
+Style/AsciiComments:
+  Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
+Style/SymbolProc:
+  Enabled: false

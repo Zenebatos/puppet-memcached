@@ -47,6 +47,16 @@ end
 if @verbosity
   flags << "-#{@verbosity.to_s}"
 end
+
+if @conn_backlog
+# Connection backlog
+  flags << "-b #{@conn_backlog.to_s}"
+end
+
+if @max_sequential
+# Maximum sequential connections
+  flags << "-R #{@max_sequential.to_s}"
+end
 -%>
 memcached_enable="<%= enabled %>"
 memcached_flags="<%= flags.join(" ") %>"
